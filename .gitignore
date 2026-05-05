@@ -1,0 +1,29 @@
+# --- Fichiers système ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# --- Dossiers temporaires (TRÈS LOURDS) ---
+/var/cache/*
+/var/logs/*
+/var/sessions/*
+/var/tmp/*
+
+# On garde les dossiers mais on ignore le contenu
+!/var/cache/.gitkeep
+!/var/logs/.gitkeep
+
+# --- Dépendances ---
+/vendor/
+/node_modules/
+
+
+# --- Médias (POIDS ÉNORME) ---
+/img/*
+!/img/index.php
+/download/
+/upload/
+
+# --- Thèmes compilés ---
+/themes/*/assets/cache/*
