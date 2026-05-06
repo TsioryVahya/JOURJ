@@ -1,0 +1,1535 @@
+{
+  "info": {
+    "name": "PrestaShop API - Collection Complète Française",
+    "_postman_id": "prestashop-full-fr-001",
+    "description": "Collection complète de l'API REST PrestaShop - Toutes les ressources avec toutes les méthodes HTTP\n\n📋 INFORMATIONS GÉNÉRALES :\n• Authentification : Basic Auth (nom d'utilisateur = clé API, mot de passe = vide)\n• Format des données : XML (par défaut)\n• Base URL : http://localhost/JOURJ/api\n\n🔧 CRÉER UNE CLÉ API DANS PRESTASHOP :\n1. Aller dans Paramètres Avancés → API Web\n2. Cliquer sur \"Ajouter une nouvelle clé API\"\n3. Générer la clé et l'affecter à votre adresse IP\n4. Sélectionner les permissions nécessaires\n\n📝 FORMAT XML :\nToutes les réponses sont au format XML. Pour chaque requête POST/PUT, le corps doit être en XML valide.\n\n👨‍💻 AUTEUR : Documentation PrestaShop\n📅 DATE : 2026\n🌐 LANGUE : Français",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      { "key": "username", "value": "{{webservice_key}}", "type": "string" },
+      { "key": "password", "value": "", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "webservice_key", "value": "EHN3E7A7E98DIFR8VQG8RJGNUWLKUPQQ", "type": "string", "description": "Votre clé API PrestaShop à générer dans le backoffice" },
+    { "key": "webservice_url", "value": "localhost/JOURJ", "type": "string", "description": "URL de votre boutique PrestaShop" }
+  ],
+  "item": [
+    {
+      "name": "🏠 Racine et Configuration Initiale",
+      "description": "Endpoints de base pour découvrir l'API et obtenir les schémas des ressources",
+      "item": [
+        {
+          "name": "📋 GET - Liste de toutes les ressources disponibles",
+          "description": "Récupère la liste complète de toutes les ressources API disponibles sur votre boutique PrestaShop. Cette requête permet de découvrir dynamiquement tous les endpoints accessibles avec votre clé API.",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://{{webservice_url}}/api",
+              "protocol": "http",
+              "host": ["{{webservice_url}}"],
+              "path": ["api"]
+            },
+            "description": "Retourne un fichier XML listant toutes les ressources (products, customers, orders, etc.) accessibles via l'API."
+          }
+        },
+        {
+          "name": "📄 GET - Schéma blanc d'une ressource",
+          "description": "Obtient un modèle XML vierge pour créer une nouvelle ressource. Idéal pour comprendre la structure XML attendue lors de la création.",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://{{webservice_url}}/api/products?schema=blank",
+              "protocol": "http",
+              "host": ["{{webservice_url}}"],
+              "path": ["api","products"],
+              "query": [{"key":"schema","value":"blank"}]
+            }
+          }
+        },
+        {
+          "name": "📖 GET - Schéma synopsis d'une ressource",
+          "description": "Obtient un schéma détaillé avec la description de chaque champ de la ressource.",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://{{webservice_url}}/api/products?schema=synopsis",
+              "protocol": "http",
+              "host": ["{{webservice_url}}"],
+              "path": ["api","products"],
+              "query": [{"key":"schema","value":"synopsis"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛒 Commandes et Paniers",
+      "description": "Gestion complète des commandes, paniers, règles panier et historiques",
+      "item": [
+        {
+          "name": "📦 Commandes",
+          "description": "Gestion des commandes clients - création, lecture, mise à jour et suppression",
+          "item": [
+            {
+              "name": "🔍 GET - Récupérer toutes les commandes",
+              "description": "Récupère la liste de toutes les commandes de la boutique. Permet d'utiliser des filtres comme ?display=full, ?limit=10, ?page=2.",
+              "request": {
+                "method": "GET",
+                "header": [{"key":"Output-Format","value":"XML"}],
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/orders?display=full&limit=20",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","orders"],
+                  "query": [{"key":"display","value":"full"},{"key":"limit","value":"20"}]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Récupérer une commande par ID",
+              "description": "Récupère les détails complets d'une commande spécifique (adresses, produits, transporteur, montants).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/orders/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","orders","1"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer une nouvelle commande",
+              "description": "Crée une nouvelle commande à partir d'un panier existant. Généralement liée à un paiement validé.",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <order>\n    <id_customer>1</id_customer>\n    <id_cart>1</id_cart>\n    <id_carrier>1</id_carrier>\n    <id_currency>1</id_currency>\n    <id_address_delivery>1</id_address_delivery>\n    <id_address_invoice>1</id_address_invoice>\n    <payment>Virement bancaire</payment>\n    <module>bankwire</module>\n    <total_paid>100.00</total_paid>\n    <total_products>100.00</total_products>\n  </order>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/orders",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","orders"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Mettre à jour une commande",
+              "description": "Met à jour les informations d'une commande existante (statut, référence de paiement, etc.).",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <order>\n    <id>1</id>\n    <current_state>2</current_state>\n    <payment>Chèque</payment>\n  </order>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/orders/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","orders","1"]
+                }
+              }
+            },
+            {
+              "name": "🗑️ DELETE - Supprimer une commande",
+              "description": "Supprime définitivement une commande (utilisation rare, généralement on change le statut).",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/orders/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","orders","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🛒 Paniers",
+          "description": "Gestion des paniers d'achat des clients",
+          "item": [
+            {
+              "name": "🔍 GET - Récupérer tous les paniers",
+              "description": "Récupère la liste de tous les paniers (actifs et abandonnés) de la boutique.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carts?display=full&limit=50",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carts"],
+                  "query": [{"key":"display","value":"full"},{"key":"limit","value":"50"}]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Récupérer un panier par ID",
+              "description": "Récupère les détails détaillés d'un panier spécifique (produits, quantités, adresses).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carts/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carts","1"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un nouveau panier",
+              "description": "Crée un nouveau panier pour un client. Peut être vide ou pré-rempli avec des produits.",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <cart>\n    <id_currency>1</id_currency>\n    <id_lang>1</id_lang>\n    <id_customer>1</id_customer>\n    <id_address_delivery>1</id_address_delivery>\n    <id_address_invoice>1</id_address_invoice>\n    <id_carrier>1</id_carrier>\n  </cart>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carts",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carts"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Mettre à jour un panier",
+              "description": "Ajoute, modifie ou supprime des produits dans un panier existant.",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <cart>\n    <id>1</id>\n    <id_customer>1</id_customer>\n    <id_carrier>2</id_carrier>\n  </cart>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carts/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carts","1"]
+                }
+              }
+            },
+            {
+              "name": "🔄 PATCH - Mise à jour partielle d'un panier",
+              "description": "Met à jour uniquement certains champs d'un panier (ex: changement du transporteur).",
+              "request": {
+                "method": "PATCH",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop><cart><id>1</id><id_carrier>2</id_carrier></cart></prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carts/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carts","1"]
+                }
+              }
+            },
+            {
+              "name": "🗑️ DELETE - Supprimer un panier",
+              "description": "Supprime définitivement un panier (panier abandonné par exemple).",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carts/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carts","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🎫 Règles panier (Codes promo)",
+          "description": "Gestion des codes promotionnels et réductions",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les règles panier",
+              "description": "Récupère tous les codes promo et réductions configurés dans la boutique.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/cart_rules",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","cart_rules"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Règle panier par ID",
+              "description": "Récupère les détails d'un code promo spécifique (réduction, date d'expiration, conditions).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/cart_rules/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","cart_rules","1"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un code promo",
+              "description": "Crée un nouveau code promotionnel avec réduction en pourcentage ou montant fixe.",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <cart_rule>\n    <date_from>2024-01-01 00:00:00</date_from>\n    <date_to>2024-12-31 23:59:59</date_to>\n    <quantity>100</quantity>\n    <quantity_per_user>1</quantity_per_user>\n    <reduction_percent>10</reduction_percent>\n    <free_shipping>0</free_shipping>\n    <name><language id=\"1\">PROMO10</language></name>\n    <code>PROMO10</code>\n    <minimum_amount_currency>1</minimum_amount_currency>\n  </cart_rule>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/cart_rules",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","cart_rules"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Modifier un code promo",
+              "description": "Modifie un code promotionnel existant (changement de réduction, dates, etc.).",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <cart_rule>\n    <id>1</id>\n    <reduction_percent>15</reduction_percent>\n    <date_to>2025-12-31 23:59:59</date_to>\n  </cart_rule>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/cart_rules/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","cart_rules","1"]
+                }
+              }
+            },
+            {
+              "name": "🗑️ DELETE - Supprimer un code promo",
+              "description": "Supprime un code promotionnel (il ne sera plus utilisable).",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/cart_rules/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","cart_rules","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "📋 Détails et historiques",
+          "description": "Gestion des détails de commandes, historiques, factures et paiements",
+          "item": [
+            {
+              "name": "🔍 GET - Détails d'une commande",
+              "description": "Récupère les détails d'une commande (produits commandés, quantités, prix unitaires).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/order_details/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","order_details","1"]
+                }
+              }
+            },
+            {
+              "name": "📜 GET - Historique des commandes",
+              "description": "Récupère l'historique des changements d'état d'une commande (dates, statuts).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/order_histories",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","order_histories"]
+                }
+              }
+            },
+            {
+              "name": "📄 GET - Factures",
+              "description": "Récupère la liste des factures générées pour les commandes.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/order_invoices",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","order_invoices"]
+                }
+              }
+            },
+            {
+              "name": "💳 GET - Paiements des commandes",
+              "description": "Récupère les informations des paiements effectués pour les commandes.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/order_payments",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","order_payments"]
+                }
+              }
+            },
+            {
+              "name": "🏷️ GET - Statuts des commandes",
+              "description": "Récupère tous les statuts possibles pour une commande (En attente, Paiement accepté, Expédié, etc.).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/order_states",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","order_states"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "📦 Catalogue Produits",
+      "description": "Gestion complète du catalogue produits, catégories, marques et déclinaisons",
+      "item": [
+        {
+          "name": "🏷️ Produits",
+          "description": "Gestion des produits (création, modification, suppression, recherche)",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les produits",
+              "description": "Récupère la liste de tous les produits avec possibilité de filtres (actifs, par prix, par catégorie, pagination).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/products?display=full&limit=30&page=1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","products"],
+                  "query": [{"key":"display","value":"full"},{"key":"limit","value":"30"},{"key":"page","value":"1"}]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Produits actifs seulement",
+              "description": "Récupère uniquement les produits actifs (visible en boutique). Utile pour le front-office.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/products?filter[active]=1&display=full&limit=50",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","products"],
+                  "query": [{"key":"filter[active]","value":"1"},{"key":"display","value":"full"},{"key":"limit","value":"50"}]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Produit par ID",
+              "description": "Récupère un produit spécifique avec toutes ses informations (nom, prix, description, stock, images).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/products/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","products","1"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un produit simple",
+              "description": "Crée un nouveau produit standard (sans déclinaisons).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <product>\n    <id_category_default>2</id_category_default>\n    <price>29.99</price>\n    <active>1</active>\n    <type>simple</type>\n    <available_for_order>1</available_for_order>\n    <show_price>1</show_price>\n    <name><language id=\"1\">Mon Nouveau Produit</language></name>\n    <description><language id=\"1\">Description détaillée de mon produit</language></description>\n    <description_short><language id=\"1\">Courte description du produit</language></description_short>\n    <link_rewrite><language id=\"1\">mon-nouveau-produit</language></link_rewrite>\n    <meta_title><language id=\"1\">Titre SEO du produit</language></meta_title>\n    <meta_description><language id=\"1\">Description SEO du produit</language></meta_description>\n  </product>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/products",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","products"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Modifier un produit",
+              "description": "Modifie les informations d'un produit existant (prix, nom, description, statut, etc.).",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <product>\n    <id>1</id>\n    <price>39.99</price>\n    <name><language id=\"1\">Produit Modifié</language></name>\n    <link_rewrite><language id=\"1\">produit-modifie</language></link_rewrite>\n  </product>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/products/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","products","1"]
+                }
+              }
+            },
+            {
+              "name": "🔄 PATCH - Mise à jour partielle",
+              "description": "Met à jour seulement le statut actif/inactif d'un produit.",
+              "request": {
+                "method": "PATCH",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop><product><id>1</id><active>0</active></product></prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/products/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","products","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "📁 Catégories",
+          "description": "Gestion des catégories de produits (arborescence)",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les catégories",
+              "description": "Récupère toutes les catégories de produits avec leur arborescence.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/categories?display=full",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","categories"],
+                  "query": [{"key":"display","value":"full"}]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Catégorie par ID",
+              "description": "Récupère les détails d'une catégorie spécifique (nom, description, produits associés).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/categories/2",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","categories","2"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer une catégorie",
+              "description": "Crée une nouvelle catégorie de produits (spécifiez l'ID parent pour la hiérarchie).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <category>\n    <id_parent>2</id_parent>\n    <active>1</active>\n    <name><language id=\"1\">Ma Nouvelle Catégorie</language></name>\n    <description><language id=\"1\">Description de la catégorie</language></description>\n    <link_rewrite><language id=\"1\">ma-nouvelle-categorie</language></link_rewrite>\n    <meta_title><language id=\"1\">Titre SEO</language></meta_title>\n  </category>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/categories",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","categories"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Modifier une catégorie",
+              "description": "Modifie une catégorie existante (nom, parent, statut).",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <category>\n    <id>3</id>\n    <name><language id=\"1\">Catégorie Renommée</language></name>\n    <link_rewrite><language id=\"1\">categorie-renommee</language></link_rewrite>\n  </category>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/categories/3",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","categories","3"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🎨 Déclinaisons (Combinaisons)",
+          "description": "Gestion des déclinaisons de produits (taille, couleur, etc.)",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les combinaisons",
+              "description": "Récupère toutes les déclinaisons de produits (ex: T-shirt bleu taille L).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/combinations",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","combinations"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer une déclinaison",
+              "description": "Ajoute une déclinaison à un produit existant (ex: T-shirt rouge taille XL).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <combination>\n    <id_product>1</id_product>\n    <quantity>10</quantity>\n    <price>5.00</price>\n    <reference>REF-COMBO-001</reference>\n    <minimal_quantity>1</minimal_quantity>\n    <available_date>2024-12-31</available_date>\n  </combination>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/combinations",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","combinations"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Modifier une déclinaison",
+              "description": "Modifie le prix ou la quantité d'une déclinaison spécifique.",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <combination>\n    <id>1</id>\n    <quantity>25</quantity>\n    <price>8.00</price>\n  </combination>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/combinations/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","combinations","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🏭 Marques et Fournisseurs",
+          "description": "Gestion des marques/fabricants et fournisseurs",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les marques",
+              "description": "Récupère tous les fabricants/marques de la boutique.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/manufacturers",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","manufacturers"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Tous les fournisseurs",
+              "description": "Récupère tous les fournisseurs de produits.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/suppliers",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","suppliers"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer une marque",
+              "description": "Ajoute une nouvelle marque/fabricant.",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <manufacturer>\n    <active>1</active>\n    <name>Nike</name>\n    <description><language id=\"1\">Description de la marque</language></description>\n  </manufacturer>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/manufacturers",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","manufacturers"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🏷️ Attributs et caractéristiques",
+          "description": "Gestion des caractéristiques techniques des produits",
+          "item": [
+            {
+              "name": "🔍 GET - Caractéristiques produits",
+              "description": "Récupère toutes les caractéristiques techniques (ex: Taille, Couleur, Matière).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/product_features",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","product_features"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Valeurs des caractéristiques",
+              "description": "Récupère toutes les valeurs possibles pour chaque caractéristique.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/product_feature_values",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","product_feature_values"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Options de déclinaison",
+              "description": "Récupère les groupes d'options pour les déclinaisons (ex: Taille, Couleur).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/product_options",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","product_options"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "👥 Clients",
+      "description": "Gestion complète des clients, adresses et groupes",
+      "item": [
+        {
+          "name": "👤 Clients",
+          "description": "Gestion des comptes clients",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les clients",
+              "description": "Récupère la liste de tous les clients inscrits sur la boutique.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customers?display=full&limit=50",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customers"],
+                  "query": [{"key":"display","value":"full"},{"key":"limit","value":"50"}]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Client par ID ou email",
+              "description": "Récupère un client spécifique par son ID. Utilisez ?filter[email]=email@example.com pour chercher par email.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customers/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customers","1"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Client par email",
+              "description": "Recherche un client par son adresse email (méthode alternative).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customers?filter[email]=client@example.com",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customers"],
+                  "query": [{"key":"filter[email]","value":"client@example.com"}]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un client",
+              "description": "Crée un nouveau compte client (mot de passe en clair, sera hashé automatiquement).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <customer>\n    <id_gender>1</id_gender>\n    <id_default_group>3</id_default_group>\n    <firstname>Jean</firstname>\n    <lastname>Dupont</lastname>\n    <email>jean.dupont@example.com</email>\n    <passwd>MonMotDePasse123!</passwd>\n    <active>1</active>\n    <newsletter>1</newsletter>\n    <optin>0</optin>\n    <birthday>1990-05-15</birthday>\n  </customer>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customers",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customers"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Modifier un client",
+              "description": "Met à jour les informations d'un client (email, nom, newsletter, etc.).",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <customer>\n    <id>1</id>\n    <firstname>Marie</firstname>\n    <lastname>Martin</lastname>\n    <email>marie.martin@example.com</email>\n    <newsletter>0</newsletter>\n  </customer>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customers/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customers","1"]
+                }
+              }
+            },
+            {
+              "name": "🗑️ DELETE - Supprimer un client",
+              "description": "Supprime définitivement un compte client (cette action est irréversible).",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customers/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customers","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "📍 Adresses",
+          "description": "Gestion des adresses de livraison et facturation des clients",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les adresses",
+              "description": "Récupère toutes les adresses de tous les clients.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/addresses",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","addresses"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Adresses d'un client",
+              "description": "Récupère toutes les adresses d'un client spécifique.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/addresses?filter[id_customer]=1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","addresses"],
+                  "query": [{"key":"filter[id_customer]","value":"1"}]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer une adresse",
+              "description": "Ajoute une nouvelle adresse pour un client (livraison ou facturation).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <address>\n    <id_customer>1</id_customer>\n    <id_country>8</id_country>\n    <alias>Domicile</alias>\n    <firstname>Jean</firstname>\n    <lastname>Dupont</lastname>\n    <address1>10 Rue de la Paix</address1>\n    <address2>Appartement 5</address2>\n    <city>Paris</city>\n    <postcode>75002</postcode>\n    <phone>0145678910</phone>\n    <phone_mobile>0612345678</phone_mobile>\n  </address>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/addresses",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","addresses"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Modifier une adresse",
+              "description": "Met à jour une adresse existante (changement de rue, code postal, etc.).",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <address>\n    <id>1</id>\n    <address1>25 Avenue des Champs-Élysées</address1>\n    <city>Paris</city>\n    <postcode>75008</postcode>\n  </address>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/addresses/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","addresses","1"]
+                }
+              }
+            },
+            {
+              "name": "🗑️ DELETE - Supprimer une adresse",
+              "description": "Supprime une adresse client.",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/addresses/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","addresses","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "👥 Groupes de clients",
+          "description": "Gestion des groupes de clients (particuliers, professionnels, VIP)",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les groupes",
+              "description": "Récupère tous les groupes de clients disponibles (ex: Client, Visiteur, Premium).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/groups",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","groups"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un groupe",
+              "description": "Crée un nouveau groupe de clients (ex: VIP, Premium).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <group>\n    <reduction>0</reduction>\n    <price_display_method>0</price_display_method>\n    <show_prices>1</show_prices>\n    <name><language id=\"1\">Clients VIP</language></name>\n  </group>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/groups",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","groups"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "💬 Service client",
+          "description": "Gestion des messages et tickets du service client",
+          "item": [
+            {
+              "name": "🔍 GET - Messages clients",
+              "description": "Récupère tous les messages envoyés par les clients.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customer_messages",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customer_messages"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Threads clients",
+              "description": "Récupère les conversations (threads) avec les clients.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customer_threads",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customer_threads"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Répondre à un client",
+              "description": "Envoie une réponse à un message client.",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <customer_message>\n    <id_customer_thread>1</id_customer_thread>\n    <id_employee>1</id_employee>\n    <message>Bonjour, votre commande sera expédiée demain.</message>\n    <private>0</private>\n  </customer_message>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/customer_messages",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","customer_messages"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "📊 Stocks et Inventaire",
+      "description": "Gestion des stocks, mouvements et entrepôts",
+      "item": [
+        {
+          "name": "📦 Stocks disponibles",
+          "description": "Gestion des quantités en stock",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les stocks disponibles",
+              "description": "Récupère les quantités disponibles pour tous les produits.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/stock_availables",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","stock_availables"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Stock d'un produit spécifique",
+              "description": "Récupère la quantité en stock pour un produit particulier.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/stock_availables?filter[id_product]=1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","stock_availables"],
+                  "query": [{"key":"filter[id_product]","value":"1"}]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Mettre à jour la quantité d'un produit",
+              "description": "Modifie la quantité en stock d'un produit (important pour la gestion des stocks).",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <stock_available>\n    <id>1</id>\n    <id_product>1</id_product>\n    <quantity>150</quantity>\n    <out_of_stock>1</out_of_stock>\n  </stock_available>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/stock_availables/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","stock_availables","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🏭 Entrepôts",
+          "description": "Gestion des entrepôts et emplacements",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les entrepôts",
+              "description": "Récupère la liste des entrepôts (si gestion multi-entrepôts activée).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/warehouses",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","warehouses"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un entrepôt",
+              "description": "Ajoute un nouvel entrepôt (pour la gestion des stocks avancée).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <warehouse>\n    <id_address>1</id_address>\n    <id_employee>1</id_employee>\n    <reference>WARE-001</reference>\n    <name>Entrepôt Principal</name>\n    <management_type>WA</management_type>\n  </warehouse>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/warehouses",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","warehouses"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "📜 Mouvements de stock",
+          "description": "Historique des entrées/sorties de stock",
+          "item": [
+            {
+              "name": "🔍 GET - Historique des mouvements",
+              "description": "Récupère l'historique complet des mouvements de stock (entrées, sorties, retours).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/stock_movements",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","stock_movements"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "💰 Prix et Taxes",
+      "description": "Gestion des prix spécifiques, taxes et règlements",
+      "item": [
+        {
+          "name": "🏷️ Prix spécifiques",
+          "description": "Gestion des prix personnalisés par client, groupe ou quantité",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les prix spécifiques",
+              "description": "Récupère toutes les règles de prix spécifiques (promos par groupe client, par quantité, etc.).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/specific_prices",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","specific_prices"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un prix spécifique",
+              "description": "Crée une règle de prix spécifique (ex: réduction pour les clients VIP ou prix dégressif par quantité).",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <specific_price>\n    <id_product>1</id_product>\n    <id_group>3</id_group>\n    <from_quantity>3</from_quantity>\n    <reduction>0.15</reduction>\n    <reduction_type>percentage</reduction_type>\n  </specific_price>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/specific_prices",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","specific_prices"]
+                }
+              }
+            },
+            {
+              "name": "🗑️ DELETE - Supprimer un prix spécifique",
+              "description": "Supprime une règle de prix spécifique.",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/specific_prices/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","specific_prices","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "📊 Taxes",
+          "description": "Gestion des taux de TVA",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les taxes",
+              "description": "Récupère tous les taux de TVA configurés (ex: TVA 20%, 10%, 5.5%).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/taxes",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","taxes"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer une taxe",
+              "description": "Ajoute un nouveau taux de TVA.",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <tax>\n    <rate>20.000</rate>\n    <active>1</active>\n    <name><language id=\"1\">TVA 20%</language></name>\n  </tax>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/taxes",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","taxes"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🔄 Règles de taxes",
+          "description": "Gestion des règles d'application des taxes par pays/région",
+          "item": [
+            {
+              "name": "🔍 GET - Groupes de règles fiscales",
+              "description": "Récupère les groupes de règles fiscales (ex: TVA France, TVA Belgique).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/tax_rule_groups",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","tax_rule_groups"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "💱 Devises",
+          "description": "Gestion des devises acceptées",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les devises",
+              "description": "Récupère toutes les devises disponibles (Euro, Dollar, Livre, etc.).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/currencies",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","currencies"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🚚 Transporteurs et Livraison",
+      "description": "Gestion des modes de livraison",
+      "item": [
+        {
+          "name": "🚛 Transporteurs",
+          "description": "Gestion des transporteurs (La Poste, DHL, etc.)",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les transporteurs",
+              "description": "Récupère tous les transporteurs disponibles (La Poste, DHL, Colissimo, etc.).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carriers",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carriers"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Transporteur par ID",
+              "description": "Récupère un transporteur spécifique avec ses tarifs et délais.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carriers/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carriers","1"]
+                }
+              }
+            },
+            {
+              "name": "➕ POST - Créer un transporteur",
+              "description": "Ajoute un nouveau mode de livraison.",
+              "request": {
+                "method": "POST",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <carrier>\n    <name>Colissimo</name>\n    <active>1</active>\n    <is_free>0</is_free>\n    <shipping_handling>1</shipping_handling>\n    <delay><language id=\"1\">Livraison sous 2-3 jours ouvrés</language></delay>\n  </carrier>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carriers",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carriers"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Activer/Désactiver un transporteur",
+              "description": "Active ou désactive un transporteur.",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <carrier>\n    <id>1</id>\n    <active>0</active>\n  </carrier>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/carriers/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","carriers","1"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Configuration Boutique",
+      "description": "Configuration globale de la boutique, langues, pays, etc.",
+      "item": [
+        {
+          "name": "🌐 Langues",
+          "description": "Gestion des langues de la boutique",
+          "item": [
+            {
+              "name": "🔍 GET - Toutes les langues",
+              "description": "Récupère toutes les langues installées (Français, Anglais, Espagnol, etc.).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/languages",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","languages"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "📍 Pays et Zones",
+          "description": "Gestion des pays et zones géographiques",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les pays",
+              "description": "Récupère tous les pays disponibles pour la livraison/facturation.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/countries",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","countries"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Toutes les zones",
+              "description": "Récupère les zones géographiques (Europe, Amérique, Asie...).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/zones",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","zones"]
+                }
+              }
+            },
+            {
+              "name": "🔍 GET - Régions/États",
+              "description": "Récupère les régions/états pour les pays qui en ont.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/states",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","states"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🏪 Configurations boutique",
+          "description": "Paramètres généraux de la boutique",
+          "item": [
+            {
+              "name": "🔍 GET - Configuration générale",
+              "description": "Récupère tous les paramètres de configuration de la boutique.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/configurations",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","configurations"]
+                }
+              }
+            },
+            {
+              "name": "✏️ PUT - Modifier un paramètre",
+              "description": "Modifie un paramètre de configuration spécifique.",
+              "request": {
+                "method": "PUT",
+                "header": [{"key":"Content-Type","value":"application/xml"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<prestashop>\n  <configuration>\n    <id>1</id>\n    <value>Nouvelle valeur</value>\n  </configuration>\n</prestashop>"
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/configurations/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","configurations","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "👩‍💼 Employés",
+          "description": "Gestion des employés du backoffice",
+          "item": [
+            {
+              "name": "🔍 GET - Tous les employés",
+              "description": "Récupère la liste des employés ayant accès au backoffice.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/employees",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","employees"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "📸 Images",
+          "description": "Gestion des images produits et autres",
+          "item": [
+            {
+              "name": "🔍 GET - Types d'images",
+              "description": "Récupère les informations sur les types d'images (home, medium, large, etc.).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/image_types",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","image_types"]
+                }
+              }
+            },
+            {
+              "name": "🖼️ GET - Image d'un produit",
+              "description": "Récupère l'image d'un produit. Format : /api/images/products/{productId}/{imageId}",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/images/products/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","images","products","1"]
+                }
+              }
+            },
+            {
+              "name": "📤 POST - Upload une image produit",
+              "description": "Ajoute une nouvelle image à un produit existant.",
+              "request": {
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {"key": "image", "type": "file", "src": "/chemin/vers/votre/image.jpg"}
+                  ]
+                },
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/images/products/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","images","products","1"]
+                }
+              }
+            },
+            {
+              "name": "🗑️ DELETE - Supprimer une image",
+              "description": "Supprime une image d'un produit.",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/images/products/1/1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","images","products","1","1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🔎 Recherche",
+          "description": "Fonctionnalités de recherche de produits",
+          "item": [
+            {
+              "name": "🔎 GET - Rechercher des produits",
+              "description": "Effectue une recherche de produits par mot-clé.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "http://{{webservice_url}}/api/search?language=1&query=t-shirt&page=1",
+                  "protocol": "http",
+                  "host": ["{{webservice_url}}"],
+                  "path": ["api","search"],
+                  "query": [{"key":"language","value":"1"},{"key":"query","value":"t-shirt"},{"key":"page","value":"1"}]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
