@@ -1,1 +1,1 @@
-mysql -u root -p prestashop < "D:\XALL\htdocs\JOURJ\databases\prestashop.sql"
+mysql -u root -p prestashop < "D:\xampp\htdocs\JOURJ\databases\prestashop.sql"
