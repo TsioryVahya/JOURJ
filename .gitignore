@@ -17,6 +17,9 @@ Thumbs.db
 # --- Dépendances ---
 /vendor/
 /node_modules/
+/react-app/node_modules/
+/react-app/dist/
+/react-app/dist-ssr/
 
 
 # --- Médias (POIDS ÉNORME) ---
@@ -27,3 +30,8 @@ Thumbs.db
 
 # --- Thèmes compilés ---
 /themes/*/assets/cache/*
+
+# --- Custom Ignores ---
+/mails/
+/modules/
+/translations/
