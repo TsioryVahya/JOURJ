@@ -27,3 +27,11 @@ Thumbs.db
 
 # --- Thèmes compilés ---
 /themes/*/assets/cache/*
+
+# --- Thèmes compilés ---
+/themes/*/assets/cache/*
+
+# --- Custom Ignores ---
+/mails/
+/modules/
+/translations/
