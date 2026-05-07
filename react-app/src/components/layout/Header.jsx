@@ -9,22 +9,12 @@ const Header = ({ isSidebarCollapsed, toggleSidebar }) => {
           <Menu size={24} />
         </button>
         <div className="logo-section">
-          <div style={{ backgroundColor: 'var(--accent-color)', padding: '5px', borderRadius: '8px', display: 'flex' }}>
-            <Search size={20} color="white" />
-          </div>
-          <span>JOURJ Admin</span>
+
+          <span>Prestashop</span>
         </div>
       </div>
 
-      {/* <div className="header-right">
-        <div className="user-menu">
-          <Bell size={20} color="var(--text-muted)" />
-          <div className="user-avatar">
-            <User size={20} color="white" />
-          </div>
-          <span style={{ fontWeight: '500' }}>Admin User</span>
-        </div>
-      </div> */}
+
     </header>
   );
 };

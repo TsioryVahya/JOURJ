@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
@@ -18,7 +19,7 @@ const Layout = ({ children }) => {
         <Header isSidebarCollapsed={isSidebarCollapsed} toggleSidebar={toggleSidebar} />
         
         <main className="content-area">
-          {children}
+          <Outlet />
         </main>
         
         <Footer />
