@@ -21,6 +21,9 @@ Thumbs.db
 /react-app/dist/
 /react-app/dist-ssr/
 
+# Styles (ignored per user request)
+*.css
+
 
 # --- Médias (POIDS ÉNORME) ---
 /img/*
